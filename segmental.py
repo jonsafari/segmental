@@ -4,6 +4,7 @@
 ## Usage: echo 'thisisatest' | python3 segmental.py unsegmented_char_ngram_counts.tsv
 
 import sys
+import sqlite3
 
 sys.argv.pop(0) # We don't need this filename
 
