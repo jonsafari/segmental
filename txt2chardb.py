@@ -1,6 +1,6 @@
 #!/usr/bin/python3
-## By Jon Dehdari, 2015
-## Counts character n-grams and puts them into an sqlite3 database.  If you want lower/upper-case merged, do it beforehand
+## By Jon Dehdari, naszka, ... , 2015
+## Counts character n-grams and puts them into persistent shelved file.  If you want lower/upper-case merged, do it beforehand
 ## Usage: cat text.txt | python3 txt2chardb.py ngrams.db
 
 import sys
@@ -26,6 +26,6 @@ for line in sys.stdin:
 
 sh = shelve.open(db_filename)
 for k, v in counts.items():
-    if v >= min_count:
-     sh[k]=v# discard singleton ngrams
+    if v >= min_count: # discard singleton ngrams
+     sh[k]=v
 sh.close
