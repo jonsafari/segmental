@@ -1,50 +1,16 @@
 #!/usr/bin/python3
-## By Jon Dehdari, 2015
+## By Jon Dehdari, naszka, ... , 2015
 ## Unsupervised segmenter, using bidirectional character backoff models
-## Usage: echo 'thisisatest' | python3 segmental.py unsegmented_char_ngram_sh.db
+## Usage: echo 'thisisatest' | python3 segmental.py unsegmented_char_ngram_shelve_file.db
 
 import sys
 import shelve
 
 ngram_order = 8 # replace with command-line argument
 
-#sh = {}
-
-## Read in count files
-"""for filename in sys.argv:
-    with open(filename) as myfile:
-        for line in myfile:
-            string, count = line.lower().rstrip().split('\t')
-            if int(count) < 7:
-                continue
-            sh[string] = count"""
-
 ## open shelve db
 for filename in sys.argv:
     sh = shelve.open(filename)
-
-#with con:
-
-### Read in count files
-#for filename in sys.argv:
-#    with open(filename) as myfile:
-#        for line in myfile:
-#            string, count = line.lower().rstrip().split('\t')
-#            if int(count) < 7:
-#                continue
-#            counts[string] = count
-
-
-def select(key):
-    if key == '':
-        return 0
-    cur = con.cursor()
-    cur.execute("SELECT count FROM ngrams WHERE ngram = ?", (key, ))
-    row = cur.fetchone()
-    if (row == None):
-        return 0
-    count = row[0]
-    return count
 
 ## Read in text to be segmented, from stdin
 for line in sys.stdin:
