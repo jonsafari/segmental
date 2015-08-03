@@ -35,10 +35,10 @@ for line in sys.stdin:
             k -= 1
         char_i = line[i]
         count_char_i = counts[char_i]
-        for_hist  = line[j:i]
-        for_joint = line[j:i+1]
-        for_prob = float(counts[for_joint]) / float(counts[for_hist])
-        #print(i, 'for_prob=', for_prob, '=', counts[for_joint], '/', counts[for_hist], for_joint, '/', for_hist, 'k=', k)
+        forw_hist  = line[j:i]
+        forw_joint = line[j:i+1]
+        forw_prob = float(counts[forw_joint]) / float(counts[forw_hist])
+        #print(i, 'forw_prob=', forw_prob, '=', counts[forw_joint], '/', counts[forw_hist], forw_joint, '/', forw_hist, 'k=', k)
         rev_prob = 1.0
         rev_hist = ''
         if (i < len_line):
@@ -47,9 +47,9 @@ for line in sys.stdin:
             rev_prob     = float(counts[rev_joint]) / float(counts[rev_hist])
             #print('  rev_prob=', rev_prob, '=', rev_joint, '/', rev_hist)
 
-        prod = for_prob*rev_prob
-        #avg  = (for_prob + rev_prob) / 2
-        #print('  ', for_hist, '|', rev_hist, ': avg=', avg, '; prod=', prod)
+        prod = forw_prob * rev_prob
+        #avg  = (forw_prob + rev_prob) / 2
+        #print('  ', forw_hist, '|', rev_hist, ': avg=', avg, '; prod=', prod)
         
 
         if (prod < 0.015):
