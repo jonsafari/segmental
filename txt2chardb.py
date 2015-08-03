@@ -29,6 +29,6 @@ with con:
     cur = con.cursor()
     cur.execute("DROP TABLE IF EXISTS ngrams")
     cur.execute("CREATE TABLE ngrams (ngram text, count int)")
-    cur.executemany("INSERT INTO ngrams VALUES(?, ?)", counts.items())
+    cur.executemany("INSERT INTO ngrams VALUES(?, ?)", [(k,v) for k, v in counts.items() if v >= 2]) # discard singleton ngrams
     cur.execute("create index ngram_index on ngrams (ngram)")
     cur.execute("vacuum ngrams")
