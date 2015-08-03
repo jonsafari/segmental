@@ -11,13 +11,12 @@ counts = {}
 
 ## Read in count files
 for filename in sys.argv:
-    myfile = open(filename)
-    for line in myfile:
-        string, count = line.lower().rstrip().split('\t')
-        if int(count) < 7:
-            continue
-        counts[string] = count
-    myfile.close
+    with open(filename) as myfile:
+        for line in myfile:
+            string, count = line.lower().rstrip().split('\t')
+            if int(count) < 7:
+                continue
+            counts[string] = count
 
 
 ## Read in text to be segmented, from stdin
