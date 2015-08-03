@@ -1,23 +1,27 @@
 #!/usr/bin/python3
 ## By Jon Dehdari, 2015
 ## Unsupervised segmenter, using bidirectional character backoff models
-## Usage: echo 'thisisatest' | python3 segmental.py unsegmented_char_ngram_counts.tsv
+## Usage: echo 'thisisatest' | python3 segmental.py unsegmented_char_ngram_sh.db
 
 import sys
-import sqlite3
+import shelve
 
 sys.argv.pop(0) # We don't need this filename
 
-counts = {}
+#sh = {}
 
 ## Read in count files
-for filename in sys.argv:
+"""for filename in sys.argv:
     with open(filename) as myfile:
         for line in myfile:
             string, count = line.lower().rstrip().split('\t')
             if int(count) < 7:
                 continue
-            counts[string] = count
+            sh[string] = count"""
+
+## open shelve db
+for filename in sys.argv:
+    sh = shelve.open(filename)
 
 
 ## Read in text to be segmented, from stdin
@@ -29,22 +33,22 @@ for line in sys.stdin:
     for i in range(1, len_line):
         j = 0
         k = len_line
-        while not line[j:i+1] in counts:
+        while not line[j:i+1] in sh:
             j += 1
-        while not line[i-1:k] in counts:
+        while not line[i-1:k] in sh:
             k -= 1
         char_i = line[i]
-        count_char_i = counts[char_i]
+        count_char_i = sh[char_i]
         forw_hist  = line[j:i]
         forw_joint = line[j:i+1]
-        forw_prob = float(counts[forw_joint]) / float(counts[forw_hist])
-        #print(i, 'forw_prob=', forw_prob, '=', counts[forw_joint], '/', counts[forw_hist], forw_joint, '/', forw_hist, 'k=', k)
+        forw_prob = float(sh[forw_joint]) / float(sh[forw_hist])
+        #print(i, 'forw_prob=', forw_prob, '=', sh[forw_joint], '/', sh[forw_hist], forw_joint, '/', forw_hist, 'k=', k)
         rev_prob = 1.0
         rev_hist = ''
         if (i < len_line):
             rev_joint = line[i-1:k]
             rev_hist  = line[i:k]
-            rev_prob     = float(counts[rev_joint]) / float(counts[rev_hist])
+            rev_prob     = float(sh[rev_joint]) / float(sh[rev_hist])
             #print('  rev_prob=', rev_prob, '=', rev_joint, '/', rev_hist)
 
         prod = forw_prob * rev_prob
@@ -56,3 +60,5 @@ for line in sys.stdin:
             print(" ", sep='', end='')
         print(line[i], sep='', end='')
     print()
+
+sh.close()
