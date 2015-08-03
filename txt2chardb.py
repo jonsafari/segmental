@@ -4,7 +4,7 @@
 ## Usage: cat text.txt | python3 txt2chardb.py ngrams.db
 
 import sys
-import sqlite3 as db
+import shelve
 
 ngram_order = 8 # replace with command-line argument
 min_count   = 5 # replace with command-line argument
@@ -24,13 +24,8 @@ for line in sys.stdin:
                 counts[line[k:i]] = 1
 
 
-con = db.connect(db_filename)
-
-with con:
-    cur = con.cursor()
-    cur.execute("DROP TABLE IF EXISTS ngrams")
-    cur.execute("CREATE TABLE ngrams (ngram text)")
-    cur.execute("ALTER TABLE ngrams ADD COLUMN count int DEFAULT 0")
-    cur.executemany("INSERT INTO ngrams VALUES(?, ?)", [(k,v) for k, v in counts.items() if v >= min_count]) # discard singleton ngrams
-    cur.execute("create index ngram_index on ngrams (ngram)")
-    cur.execute("vacuum ngrams")
+sh = shelve.open(db_filename)
+for k, v in counts.items():
+    if v >= min_count:
+     sh[k]=v# discard singleton ngrams
+sh.close

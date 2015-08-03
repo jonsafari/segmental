@@ -1,16 +1,27 @@
 #!/usr/bin/python3
 ## By Jon Dehdari, 2015
 ## Unsupervised segmenter, using bidirectional character backoff models
-## Usage: echo 'thisisatest' | python3 segmental.py unsegmented_char_ngram_counts.tsv
+## Usage: echo 'thisisatest' | python3 segmental.py unsegmented_char_ngram_sh.db
 
 import sys
-import sqlite3 as db
+import shelve
 
 ngram_order = 8 # replace with command-line argument
 
-counts = {}
+#sh = {}
 
-con = db.connect(sys.argv[1]) # replace with command-line argument
+## Read in count files
+"""for filename in sys.argv:
+    with open(filename) as myfile:
+        for line in myfile:
+            string, count = line.lower().rstrip().split('\t')
+            if int(count) < 7:
+                continue
+            sh[string] = count"""
+
+## open shelve db
+for filename in sys.argv:
+    sh = shelve.open(filename)
 
 #with con:
 
@@ -42,37 +53,24 @@ for line in sys.stdin:
     print(line, ':', file=sys.stderr)
     print(line[0], sep='', end='')
     for i in range(1, len_line):
-        char_i = line[i]
-        #print("char_i=", char_i)
-        count_char_i = select(char_i)
-
-        j = max(0, i - ngram_order)
-        k = min(len_line, i + ngram_order)
-        #while not line[j:i+1] in counts:
-        while select(line[j:i+1]) < 1:
-            #print("j=", j, "i+1=", i+1, "key=", line[j:i+1])
+        j = 0
+        k = len_line
+        while not line[j:i+1] in sh:
             j += 1
-        while select(line[i-1:k]) < 1:
-            #print("i-1=", i-1, "k=", k, "key=", line[i-1:k])
+        while not line[i-1:k] in sh:
             k -= 1
-
+        char_i = line[i]
+        count_char_i = sh[char_i]
         forw_hist  = line[j:i]
         forw_joint = line[j:i+1]
-        forw_prob = 1.0
-        try:
-            forw_prob = float(select(forw_joint)) / float(select(forw_hist))
-        except:
-            pass
-        #print(i, 'forw_prob=', forw_prob, '=', select(forw_joint), '/', select(forw_hist), forw_joint, '/', forw_hist, 'k=', k)
+        forw_prob = float(sh[forw_joint]) / float(sh[forw_hist])
+        #print(i, 'forw_prob=', forw_prob, '=', sh[forw_joint], '/', sh[forw_hist], forw_joint, '/', forw_hist, 'k=', k)
         rev_prob = 1.0
         rev_hist = ''
         if (i < len_line):
             rev_joint = line[i-1:k]
             rev_hist  = line[i:k]
-            try:
-                rev_prob = float(select(rev_joint)) / float(select(rev_hist))
-            except:
-                pass
+            rev_prob     = float(sh[rev_joint]) / float(sh[rev_hist])
             #print('  rev_prob=', rev_prob, '=', rev_joint, '/', rev_hist)
 
         prod = forw_prob * rev_prob
@@ -84,3 +82,5 @@ for line in sys.stdin:
             print(" ", sep='', end='')
         print(line[i], sep='', end='')
     print()
+
+sh.close()
