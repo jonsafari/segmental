@@ -6,7 +6,8 @@
 import sys
 import sqlite3 as db
 
-ngram_order = 9 # replace with command-line argument
+ngram_order = 8 # replace with command-line argument
+min_count   = 5 # replace with command-line argument
 
 db_filename = sys.argv[1] # replace with command-line argument
 
@@ -29,6 +30,6 @@ with con:
     cur = con.cursor()
     cur.execute("DROP TABLE IF EXISTS ngrams")
     cur.execute("CREATE TABLE ngrams (ngram text, count int)")
-    cur.executemany("INSERT INTO ngrams VALUES(?, ?)", [(k,v) for k, v in counts.items() if v >= 2]) # discard singleton ngrams
+    cur.executemany("INSERT INTO ngrams VALUES(?, ?)", [(k,v) for k, v in counts.items() if v >= min_count]) # discard singleton ngrams
     cur.execute("create index ngram_index on ngrams (ngram)")
     cur.execute("vacuum ngrams")
