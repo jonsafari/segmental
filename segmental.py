@@ -9,6 +9,7 @@ import shelve
 ngram_order = 8 # replace with command-line argument
 
 ## open shelve db
+print("file: ", sys.argv[1])
 sh = shelve.open(sys.argv[1])
 
 ## Read in text to be segmented, from stdin
@@ -28,14 +29,21 @@ for line in sys.stdin:
         count_char_i = sh[char_i]
         forw_hist  = line[j:i]
         forw_joint = line[j:i+1]
-        forw_prob = float(sh[forw_joint]) / float(sh[forw_hist])
+        forw_prob = 1.0
+        try:
+            forw_prob = float(sh[forw_joint]) / float(sh[forw_hist])
+        except:
+            pass
         #print(i, 'forw_prob=', forw_prob, '=', sh[forw_joint], '/', sh[forw_hist], forw_joint, '/', forw_hist, 'k=', k)
         rev_prob = 1.0
         rev_hist = ''
         if (i < len_line):
             rev_joint = line[i-1:k]
             rev_hist  = line[i:k]
-            rev_prob     = float(sh[rev_joint]) / float(sh[rev_hist])
+            try:
+                rev_prob     = float(sh[rev_joint]) / float(sh[rev_hist])
+            except:
+                pass
             #print('  rev_prob=', rev_prob, '=', rev_joint, '/', rev_hist)
 
         prod = forw_prob * rev_prob
