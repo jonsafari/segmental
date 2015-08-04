@@ -24,8 +24,7 @@ for line in sys.stdin:
                 counts[line[k:i]] = 1
 
 
-sh = shelve.open(db_filename)
-for k, v in counts.items():
-    if v >= min_count: # discard singleton ngrams
-     sh[k]=v
-sh.close
+with shelve.open(db_filename) as sh:
+    for k, v in counts.items():
+        if v >= min_count: # discard singleton ngrams
+         sh[k]=v
