@@ -9,8 +9,7 @@ import shelve
 ngram_order = 8 # replace with command-line argument
 
 ## open shelve db
-for filename in sys.argv:
-    sh = shelve.open(filename)
+sh = shelve.open(sys.argv[1])
 
 ## Read in text to be segmented, from stdin
 for line in sys.stdin:
