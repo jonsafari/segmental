@@ -9,8 +9,8 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Given a text file, iterates uni-directional or bi-directional RNNLM-word-segmentation.')
     parser.add_argument('text', metavar='text', type=str,
                    help='The input text')
-    parser.add_argument('-threshold', metavar='-threshold', type=float,default = .2,
-                   help='The prob threshold (default=0.2)')
+    parser.add_argument('-threshold', metavar='-threshold', type=float,default = .15,
+                   help='The prob threshold (default=0.15)')
     parser.add_argument('-rnnlm', metavar='rnnlm', type=str, default='./rnnlm',
                    help='file path to the rnnlm program (default=./rnnlm)')
     parser.add_argument('-it', metavar='it', type=int, default=10,
