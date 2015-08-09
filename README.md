@@ -36,6 +36,6 @@ optional arguments:
   -fast fast            Segments much faster, but uses only one training
                         iteration for the RNNLMs (default=1)
   -output output        Output folder to which the segmentations should be
-                        written (1 file / iteration), default = "iterations/"```
+                        written (1 file / iteration), default = "iterations/"
 
 
