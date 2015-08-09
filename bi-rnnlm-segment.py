@@ -10,9 +10,9 @@ import shutil
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Given a text file, and a prob-threshold trains a bi-directional RNNLM, and segments the text according to those places where the threshold is reached.')
     parser.add_argument('text', metavar='text', type=str,
-                   help='The input text')
-    parser.add_argument('-threshold', metavar='-threshold', type=float,default = 0.5,
-                   help='The prob threshold (default=0.5)')
+                   help='The input text')
+    parser.add_argument('-threshold', metavar='-threshold', type=float,default = 0.1,
+                   help='The prob threshold (default=0.1)')
     parser.add_argument('-rnnlm', metavar='rnnlm', type=str, default='./rnnlm',
                    help='file path to the rnnlm program (default=./rnnlm)')
     parser.add_argument('-output', metavar='output', type=str, default='segmented.txt',
@@ -153,7 +153,7 @@ if __name__ == '__main__':
                 word1, prob1 = outProbs[i][j]
                 word2, prob2 = outProbsR[i][j]
                 
-                if (prob1+prob2) > args.threshold or firstword:
+                if (prob1*prob2) > args.threshold or firstword:
                     segmented.write(word1)
                     firstword = False
                 else:
