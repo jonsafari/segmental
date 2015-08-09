@@ -7,7 +7,7 @@ for which the probability is higher than a given threshold.
 Probability on a unit is calculated using recurrent neural network based language models.
 There are two versions:
 * **uni-directional**, using only left-to-right probability
-* **bi-directional**, using the sum of both left-to-right, and right-to-left probability.
+* **bi-directional**, using the product of both left-to-right, and right-to-left probability.
 The segmenter runs in iterations. In each iteration a new language model is built, based on the segmentation from the previous iteration.
 
 ###Requirements
