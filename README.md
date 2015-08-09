@@ -10,9 +10,6 @@ There are two versions:
 * **bi-directional**, using the sum of both left-to-right, and right-to-left probability.
 The segmenter runs in iterations. In each iteration a new language model is built, based on the segmentation from the previous iteration.
 
-
-Code
-----
 ###Requirements
 * [rnnlm](http://www.fit.vutbr.cz/~imikolov/rnnlm/) (tested on version 0.3e)
 * [python](https://www.python.org/download/releases/2.7/) (version 2.7)
