@@ -16,6 +16,8 @@ if __name__ == '__main__':
                    help='file path to the rnnlm program (default=./rnnlm)')
     parser.add_argument('-output', metavar='output', type=str, default='segmented.txt',
                    help='segmented output file (default: segmented.txt)')
+    parser.add_argument('-fast', metavar='fast', type=int, default=1,
+                   help='Runs each RNNLM only for one iteration, is faster, but the LM is less accurate.(default=1)')
 
     args = parser.parse_args()  
     
@@ -47,13 +49,17 @@ if __name__ == '__main__':
     sys.stderr.write('(2) Training RNNLM...\n')
     # Training RNNLM
     with open('tmp/out.tmp','w') as output:
-        proc = subprocess.Popen([args.rnnlm,'-hidden','20', '-train', 'tmp/train.tmp', '-valid','tmp/dev.tmp','-rnnlm','tmp/model.tmp','-test', args.text,'-debug','2'], shell=False, stdout=subprocess.PIPE)
+        command = [args.rnnlm,'-hidden','20', '-train', 'tmp/train.tmp', '-valid','tmp/dev.tmp','-rnnlm','tmp/model.tmp','-test', args.text,'-debug','2']
+        if args.fast:
+            command += ['-one-iter']
+        proc = subprocess.Popen(command, shell=False, stdout=subprocess.PIPE)
     
     # Segmenting using output from RNNLM
     start = False
+    firstword = True
     with open(args.output, 'w') as segmented:
         for line in iter(proc.stdout.readline,''):
-
+                
                 # if the training output part of stdout is over and it is actually outputting the probabilities
                 if start: 
                     try:
@@ -63,26 +69,18 @@ if __name__ == '__main__':
                         sys.stderr.write(':'+line[:-1]+'\n')              
                     if word=='</s>':
                         segmented.write('\n')
-                    elif word!='<s>':
-                        if prob > args.threshold:
+                        firstword = True
+                    else:
+                        if prob > args.threshold or firstword:
                             segmented.write(word)
+                            firstword = False
                         else:
                             segmented.write(' '+word)
-                        
 
-                    else:
-                        continue
                   
 
             
                 if line=='----------------------------------\n': # last line of training output
                     sys.stderr.write('(3) Segmenting Text...\n')
                     start=True    
-    
-    
-   
-    
-    
-    
-    
-    
+ 
